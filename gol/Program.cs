@@ -22,6 +22,15 @@ namespace gol
             demo[3, 1] = true;
             demo[3, 2] = true;
 
+            demo[0, 4] = true;
+            demo[1, 4] = true;
+            demo[2, 4] = true;
+
+            // Blinker Test
+            demo[6, 0] = true;
+            demo[6, 1] = true;
+            demo[6, 2] = true;
+
             GameOfLife gold = new GameOfLife(demo, rows, columns);
             gold.tick();
 
@@ -57,9 +66,9 @@ namespace gol
 
         private void gridScan()
         {
-            for (int i = 1; i < (Rows - 2); i+=2)
+            for (int i = 1; i < (Rows - 1); i+=2)
             {
-                for(int j = 1; j < (Columns - 2); j+=2)
+                for(int j = 1; j < (Columns - 1); j+=2)
                 {
                     checkNeighbors(i, j);
                 }
@@ -72,7 +81,9 @@ namespace gol
             {
                 for (int j = 0; j < Columns; j++)
                 {
+                    if (Grid1[i, j] == true) Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(Grid1[i, j] + " ");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 Console.WriteLine();
             }
@@ -82,32 +93,44 @@ namespace gol
         {
             int live_count = 0;
 
-            if (((Grid1[row_pos - 1, col_pos - 1] | Grid1[row_pos, col_pos - 1]  | Grid1[row_pos + 1, col_pos - 1] ) & true) == true) live_count++;
-
-            if (((Grid1[row_pos - 1, col_pos] | Grid1[row_pos, col_pos] | Grid1[row_pos + 1, col_pos]) & true) == true) live_count++;
-
-            if (((Grid1[row_pos - 1, col_pos + 1] | Grid1[row_pos, col_pos + 1] | Grid1[row_pos + 1, col_pos + 1]) & true) == true) live_count++;
-            
-            if(live_count > 2) applyRule4(row_pos, col_pos);
+            //if (((Grid1[row_pos - 1, col_pos - 1] | Grid1[row_pos, col_pos - 1]  | Grid1[row_pos + 1, col_pos - 1] ) & true) == true) live_count++;
+            //if (((Grid1[row_pos - 1, col_pos] | Grid1[row_pos, col_pos] | Grid1[row_pos + 1, col_pos]) & true) == true) live_count++;
+            //if (((Grid1[row_pos - 1, col_pos + 1] | Grid1[row_pos, col_pos + 1] | Grid1[row_pos + 1, col_pos + 1]) & true) == true) live_count++;
+            //if(live_count > 2) 
+            applyRule4(row_pos, col_pos);
         }
 
         private void applyRule4(int row_pos, int col_pos)
         {
             // Top 
-            if (Grid1[row_pos - 1, col_pos - 1] && Grid1[row_pos - 1, col_pos] && Grid1[row_pos - 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
-            else if (Grid1[row_pos - 1, col_pos - 1] && Grid1[row_pos, col_pos] && Grid1[row_pos - 1, col_pos + 1]) Grid1[row_pos - 1, col_pos] |= true;
+            if (Grid2[row_pos - 1, col_pos - 1] && Grid2[row_pos - 1, col_pos] && Grid2[row_pos - 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
+            else if (Grid2[row_pos - 1, col_pos - 1] && Grid2[row_pos, col_pos] && Grid2[row_pos - 1, col_pos + 1]) Grid1[row_pos - 1, col_pos] |= true;
 
             // Left
-            if (Grid1[row_pos - 1, col_pos - 1] && Grid1[row_pos, col_pos - 1] && Grid1[row_pos + 1, col_pos - 1]) Grid1[row_pos, col_pos] |= true;
-            else if (Grid1[row_pos - 1, col_pos - 1] && Grid1[row_pos, col_pos] && Grid1[row_pos + 1, col_pos - 1]) Grid1[row_pos, col_pos - 1] |= true;
+            if (Grid2[row_pos - 1, col_pos - 1] && Grid2[row_pos, col_pos - 1] && Grid2[row_pos + 1, col_pos - 1]) Grid1[row_pos, col_pos] |= true;
+            else if (Grid2[row_pos - 1, col_pos - 1] && Grid2[row_pos, col_pos] && Grid2[row_pos + 1, col_pos - 1]) Grid1[row_pos, col_pos - 1] |= true;
+
+            // Middle
+            if (Grid2[row_pos, col_pos - 1] && Grid2[row_pos, col_pos] && Grid2[row_pos, col_pos + 1])
+            {
+                Grid1[row_pos + 1, col_pos] |= true;
+                Grid1[row_pos - 1, col_pos] |= true;
+            }
+
+            // Center
+            if (Grid2[row_pos - 1, col_pos] && Grid2[row_pos, col_pos] && Grid2[row_pos + 1, col_pos])
+            {
+                Grid1[row_pos, col_pos + 1] |= true;
+                Grid1[row_pos, col_pos - 1] |= true;
+            }
 
             // Right
-            if (Grid1[row_pos - 1, col_pos + 1] && Grid1[row_pos, col_pos + 1] && Grid1[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
-            else if (Grid1[row_pos - 1, col_pos + 1] && Grid1[row_pos, col_pos] && Grid1[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos + 1] |= true;
+            if (Grid2[row_pos - 1, col_pos + 1] && Grid2[row_pos, col_pos + 1] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
+            else if (Grid2[row_pos - 1, col_pos + 1] && Grid2[row_pos, col_pos] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos + 1] |= true;
 
             // Bottom
-            if (Grid1[row_pos + 1, col_pos - 1] && Grid1[row_pos + 1, col_pos] && Grid1[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
-            else if (Grid1[row_pos + 1, col_pos - 1] && Grid1[row_pos, col_pos] && Grid1[row_pos + 1, col_pos + 1]) Grid1[row_pos + 1, col_pos] |= true;
+            if (Grid2[row_pos + 1, col_pos - 1] && Grid2[row_pos + 1, col_pos] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
+            else if (Grid2[row_pos + 1, col_pos - 1] && Grid2[row_pos, col_pos] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos + 1, col_pos] |= true;
         }
 
         private void applyRule2()
