@@ -1,7 +1,16 @@
 ﻿// ------------------------------------------------------------ >>
 // Project: GoL
 // TODO: Array bounding checks and positioning
+//          May sidestep by padding array edges
+//              What happens when oscillating patterns hit edges? are the edges wrapped? or pattern lost?
+//
 // Good: Both 'Blinker' and 'Block' appear to be working
+//          Added placePattern method to assist testing
+//                placePattern( string pattern, int row_pos, int col_pos)
+//                  patterns: block, toad, blinker and supply start location
+//
+//      * Call placePattern before a tick() call to ensure changes are applied to grid
+//      
 // ------------------------------------------------------------ >>
 using System;
 
@@ -11,19 +20,17 @@ namespace gol
     {
         static void Main(string[] args)
         {
-            const int rows = 11;
-            const int columns = 7;
+            const int rows = 12;
+            const int columns = 15;
             bool[,] demo = new bool[rows, columns];
 
-            // Gap neighbor test with 3rd being focal point
-            //demo[2, 0] = true;
-            //demo[3, 1] = true;
-            //demo[2, 2] = true;
-
-            // Vertical Line aka blinker phase2
-            //demo[7, 5] = true;
-            //demo[8, 5] = true;
-            //demo[9, 5] = true;
+            // Toad Test
+            demo[3, 9] = true;
+            demo[3, 10] = true;
+            demo[3, 11] = true;
+            demo[2, 10] = true;
+            demo[2, 11] = true;
+            demo[2, 12] = true;
 
             // Block Test
             demo[1, 5] = true;
@@ -38,11 +45,14 @@ namespace gol
 
             // Instantiate GameofLife object
             GameOfLife gold = new GameOfLife(demo, rows, columns);
-            gold.drawGrid();
-            gold.tick();
-            gold.tick();
 
-            while (true) ;
+            gold.placePattern("beacon", 7, 7);
+
+            gold.drawGrid();        // Display output
+            gold.tick();            // Show one step
+            gold.tick();            // Show second step and view application of rules
+
+            while (true) ;          // Used to hold terminal window open for output
         }
     }
 
@@ -70,6 +80,50 @@ namespace gol
             applyGridChanges();
             drawGrid();
         } // end tick method
+
+        public bool placePattern(string pattern, int row_pos, int col_pos)
+        {
+            // Like to add gliders/spaceships and pulsar. Somehting big like a puffer would be spectacular
+
+            switch (pattern)
+            {
+                case "block":
+                    if (row_pos + 1 > Rows || col_pos + 1 > Columns) return false;
+                    Grid1[row_pos, col_pos] = true;
+                    Grid1[row_pos, col_pos + 1] = true;
+                    Grid1[row_pos + 1, col_pos] = true;
+                    Grid1[row_pos + 1, col_pos + 1] = true;
+                    break;
+                case "beacon":
+                    if (row_pos + 3 > Rows || col_pos + 3 > Columns) return false;
+                    Grid1[row_pos, col_pos] = true;
+                    Grid1[row_pos, col_pos + 1] = true;
+                    Grid1[row_pos + 1, col_pos] = true;
+                    Grid1[row_pos + 1, col_pos + 1] = true;
+
+                    Grid1[row_pos + 2, col_pos + 2] = true;
+                    Grid1[row_pos + 2, col_pos + 3] = true;
+                    Grid1[row_pos + 3, col_pos + 2] = true;
+                    Grid1[row_pos + 3, col_pos + 3] = true;
+                    break;
+                case "toad":
+                    if (row_pos + 1 > Rows || col_pos + 2 > Columns) return false;
+                    Grid1[row_pos, col_pos] = true;
+                    Grid1[row_pos, col_pos + 1] = true;
+                    Grid1[row_pos, col_pos + 2] = true;
+                    Grid1[row_pos + 1, col_pos - 1] = true;
+                    Grid1[row_pos + 1, col_pos] = true;
+                    Grid1[row_pos + 1, col_pos + 1] = true;
+                    break;
+                case "blinker":
+                    if (row_pos + 2 > Rows || col_pos > Columns) return false;
+                    Grid1[row_pos, col_pos] = true;
+                    Grid1[row_pos + 1, col_pos] = true;
+                    Grid1[row_pos + 2, col_pos] = true;
+                    break;
+            }
+            return true;
+        }
 
         private void gridScan()
         {
@@ -152,6 +206,7 @@ namespace gol
             }
         } // end applyGridChanges method
 
+        // Not used anymore
         private void applyRule4(int row_pos, int col_pos)
         {
             // Top 
@@ -184,6 +239,5 @@ namespace gol
             if (Grid2[row_pos + 1, col_pos - 1] && Grid2[row_pos + 1, col_pos] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos, col_pos] |= true;
             else if (Grid2[row_pos + 1, col_pos - 1] && Grid2[row_pos, col_pos] && Grid2[row_pos + 1, col_pos + 1]) Grid1[row_pos + 1, col_pos] |= true;
         }
-
     }
 }
