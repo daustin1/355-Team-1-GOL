@@ -30,6 +30,8 @@ namespace gol
         public int ROWS { get { return Rows; } set { Rows = value; } }
         public int COLUMNS { get { return Columns; } set { Columns = value; } }
 
+        public enum patterns { toad, block, blinker, beacon }
+
         private int Rows, Columns;
         private bool[,] Grid1;
         private bool[,] Grid2;
@@ -52,20 +54,20 @@ namespace gol
             applyGridChanges();
         } // end tick method
 
-        public bool placePattern(string pattern, int row_pos, int col_pos)
+        public bool placePattern(patterns pattern, int row_pos, int col_pos)
         {
             // Like to add gliders/spaceships and pulsar. Somehting big like a puffer would be spectacular
 
             switch (pattern)
             {
-                case "block":
+                case patterns.block:
                     if (row_pos + 1 > Rows || col_pos + 1 > Columns) return false;
                     Grid1[row_pos, col_pos] = true;
                     Grid1[row_pos, col_pos + 1] = true;
                     Grid1[row_pos + 1, col_pos] = true;
                     Grid1[row_pos + 1, col_pos + 1] = true;
                     break;
-                case "beacon":
+                case patterns.beacon:
                     if (row_pos + 3 > Rows || col_pos + 3 > Columns) return false;
                     Grid1[row_pos, col_pos] = true;
                     Grid1[row_pos, col_pos + 1] = true;
@@ -77,7 +79,7 @@ namespace gol
                     Grid1[row_pos + 3, col_pos + 2] = true;
                     Grid1[row_pos + 3, col_pos + 3] = true;
                     break;
-                case "toad":
+                case patterns.toad:
                     if (row_pos + 1 > Rows || col_pos + 2 > Columns) return false;
                     Grid1[row_pos, col_pos] = true;
                     Grid1[row_pos, col_pos + 1] = true;
@@ -86,7 +88,7 @@ namespace gol
                     Grid1[row_pos + 1, col_pos] = true;
                     Grid1[row_pos + 1, col_pos + 1] = true;
                     break;
-                case "blinker":
+                case patterns.blinker:
                     if (row_pos + 2 > Rows || col_pos > Columns) return false;
                     Grid1[row_pos, col_pos] = true;
                     Grid1[row_pos + 1, col_pos] = true;
