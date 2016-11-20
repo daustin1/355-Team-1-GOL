@@ -1,7 +1,7 @@
 ﻿// ------------------------------------------------------------ >>
 // Project: GoL
 //
-// Version: 3
+// Version: 3.1
 //
 // TODO: Array bounding checks and positioning
 //          May sidestep by padding array edges
@@ -9,10 +9,10 @@
 //
 // Good: Both 'Blinker' and 'Block' appear to be working
 //          Added placePattern method to assist testing
-//                placePattern( string pattern, int row_pos, int col_pos)
-//                  patterns: block, toad, blinker and supply start location
+//                placePattern( patterns pattern, int row_pos, int col_pos)
+//                      enum patterns: block, toad, blinker and supply start location
 //
-//      * Call placePattern before a tick() call to ensure changes are applied to grid
+//   |==> Call placePattern before a tick() call to ensure changes are applied to grid
 //      
 // ------------------------------------------------------------ >>
 
@@ -26,7 +26,7 @@ namespace gol
 {
     public class GameOfLife
     {
-        public bool[,] Grid { get { return Grid1; } }
+        public bool[,] Grid { get { return Grid1; } set { Grid1 = value; } }
         public int ROWS { get { return Rows; } set { Rows = value; } }
         public int COLUMNS { get { return Columns; } set { Columns = value; } }
 
@@ -53,6 +53,12 @@ namespace gol
             gridScan();
             applyGridChanges();
         } // end tick method
+
+        public void flipAbit(int row, int column)
+        {
+            if (Grid1[row, column]) Grid1[row, column] = false;
+            else Grid1[row, column] = true;
+        } // End flipAbit
 
         public bool placePattern(patterns pattern, int row_pos, int col_pos)
         {
